@@ -41,15 +41,29 @@ void trap(struct trapframe* tf) {
 
   switch(tf->trapno) {
     case T_IRQ0 + IRQ_TIMER:
-      if(cpu->id == 0) {
-        acquire(&tickslock);
-        ticks++;
-        // This might be a good place to track the stats
-        wakeup(&ticks);
-        release(&tickslock);
+    if(cpu->id == 0) {
+    acquire(&tickslock);
+    ticks++;
+    wakeup(&ticks);
+
+    // Update process statistics
+    struct proc* p;
+    acquire(&ptable.lock); // Assuming ptable.lock is the lock for the process table
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
+      if(p->state == SLEEPING) {
+        p->sleep_time++;
+      } else if(p->state == RUNNABLE) {
+        p->ready_time++;
+      } else if(p->state == RUNNING) {
+        p->running_time++;
       }
-      lapiceoi();
-      break;
+    }
+    release(&ptable.lock);
+
+    release(&tickslock);
+  }
+  lapiceoi();
+  break;
     case T_IRQ0 + IRQ_IDE:
       ideintr();
       lapiceoi();
