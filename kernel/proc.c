@@ -149,6 +149,7 @@ int fork(void) {
   // Allocate process.
   if((np = allocproc()) == 0)
     return -1;
+  np->creation_time = ticks;
 
   // Copy process state from p.
   if((np->pgdir = copyuvm(proc->pgdir, proc->sz)) == 0) {
