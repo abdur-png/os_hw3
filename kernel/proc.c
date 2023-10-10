@@ -1,3 +1,4 @@
+//proc.h
 #include "kernel/proc.h"
 #include "kernel/defs.h"
 #include "kernel/memlayout.h"
@@ -7,10 +8,7 @@
 #include "kernel/types.h"
 #include "kernel/x86.h"
 
-struct ptable {
-  struct spinlock lock;
-  struct proc* proc[NPROC];  // This is now an array of pointers
-};
+
 
 int wait_stat(int *ctime, int *ttime, int *retime, int *rutime, int *stime) {
     struct proc *p;
@@ -59,7 +57,7 @@ int wait_stat(int *ctime, int *ttime, int *retime, int *rutime, int *stime) {
 
 
 
-extern struct ptable ptable;
+struct ptable ptable;
 
 static struct proc* initproc;
 
