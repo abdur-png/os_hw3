@@ -8,8 +8,6 @@
 #include "kernel/types.h"
 #include "kernel/x86.h"
 
-
-
 int wait_stat(int *ctime, int *ttime, int *retime, int *rutime, int *stime) {
     struct proc *p;
     int havekids, pid;
@@ -54,8 +52,6 @@ int wait_stat(int *ctime, int *ttime, int *retime, int *rutime, int *stime) {
         sleep(proc, &ptable.lock);
     }
 }
-
-
 
 struct ptable ptable;
 
