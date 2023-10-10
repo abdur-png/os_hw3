@@ -49,7 +49,8 @@ void trap(struct trapframe* tf) {
     // Update process statistics
     struct proc* p;
     acquire(&ptable.lock); // Assuming ptable.lock is the lock for the process table
-    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
+    for(int i = 0; i < NPROC; i++) {
+      p = ptable.proc[i];
       if(p->state == SLEEPING) {
         p->sleep_time++;
       } else if(p->state == RUNNABLE) {
