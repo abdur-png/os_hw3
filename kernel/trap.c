@@ -1,3 +1,4 @@
+//trap.c
 #include "kernel/defs.h"
 #include "kernel/memlayout.h"
 #include "kernel/mmu.h"
@@ -7,6 +8,7 @@
 #include "kernel/traps.h"
 #include "kernel/types.h"
 #include "kernel/x86.h"
+
 
 // Interrupt descriptor table (shared by all CPUs).
 struct gatedesc idt[256];
