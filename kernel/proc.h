@@ -1,3 +1,4 @@
+//proc.h
 #ifndef XV6_PROC_H
 #define XV6_PROC_H
 
@@ -9,10 +10,14 @@
 
 struct proc;
 
-struct ptable;
-
+struct ptable {
+  struct spinlock lock;
+  struct proc* proc[NPROC];  // This is now an array of pointers
+};
 
 extern struct ptable ptable;
+
+
 
 
 // Segments in proc->gdt.
@@ -102,7 +107,7 @@ int wait_stat(int *ctime, int *ttime, int *retime, int *rutime, int *stime);
 
 
 
-extern struct ptable ptable;
+// extern struct ptable ptable;
 
 // Process memory is laid out contiguously, low addresses first:
 //   text
