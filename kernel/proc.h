@@ -8,10 +8,8 @@
 #include "types.h"
 
 struct proc;
-struct ptable {
-  struct spinlock lock;
-  struct proc* proc[NPROC];  // This is now an array of pointers
-};
+
+struct ptable;
 
 
 extern struct ptable ptable;
@@ -99,51 +97,7 @@ struct proc {
 };
 
 
-int wait_stat(int *ctime, int *ttime, int *retime, int *rutime, int *stime) {
-    struct proc *p;
-    int havekids, pid;
-
-    acquire(&ptable.lock);
-    for(;;){
-        // Scan through table looking for zombie children.
-        havekids = 0;
-        for(int i = 0; i < NPROC; i++){
-            p = ptable.proc[i];
-            if(!p || p->parent != proc)
-                continue;
-            havekids = 1;
-            if(p->state == ZOMBIE){
-                // Found one.
-                pid = p->pid;
-                *ctime = p->creation_time;
-                *ttime = p->termination_time;
-                *retime = p->ready_time;
-                *rutime = p->running_time;
-                *stime = p->sleep_time;
-                kfree(p->kstack);
-                p->kstack = 0;
-                freevm(p->pgdir);
-                p->state = UNUSED;
-                p->pid = 0;
-                p->parent = 0;
-                p->name[0] = 0;
-                p->killed = 0;
-                release(&ptable.lock);
-                return pid;
-            }
-        }
-
-        // No point waiting if we don't have any children.
-        if(!havekids || proc->killed){
-            release(&ptable.lock);
-            return -1;
-        }
-
-        // Wait for children to exit.  (See wakeup1 call in proc_exit.)
-        sleep(proc, &ptable.lock);
-    }
-}
-
+int wait_stat(int *ctime, int *ttime, int *retime, int *rutime, int *stime);
 
 
 
