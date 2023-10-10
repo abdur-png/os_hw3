@@ -7,6 +7,16 @@
 #include "spinlock.h"
 #include "types.h"
 
+struct proc;
+struct ptable {
+  struct spinlock lock;
+  struct proc* proc[NPROC];  // This is now an array of pointers
+};
+
+
+extern struct ptable ptable;
+
+
 // Segments in proc->gdt.
 #define NSEGS 7
 
@@ -97,8 +107,9 @@ int wait_stat(int *ctime, int *ttime, int *retime, int *rutime, int *stime) {
     for(;;){
         // Scan through table looking for zombie children.
         havekids = 0;
-        for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-            if(p->parent != proc)
+        for(int i = 0; i < NPROC; i++){
+            p = ptable.proc[i];
+            if(!p || p->parent != proc)
                 continue;
             havekids = 1;
             if(p->state == ZOMBIE){
@@ -134,10 +145,8 @@ int wait_stat(int *ctime, int *ttime, int *retime, int *rutime, int *stime) {
 }
 
 
-struct ptable {
-  struct spinlock lock;
-  struct proc proc[NPROC];
-};
+
+
 
 extern struct ptable ptable;
 
