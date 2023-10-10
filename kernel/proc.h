@@ -17,9 +17,6 @@ struct ptable {
 
 extern struct ptable ptable;
 
-
-
-
 // Segments in proc->gdt.
 #define NSEGS 7
 
@@ -104,10 +101,6 @@ struct proc {
 
 int wait_stat(int *ctime, int *ttime, int *retime, int *rutime, int *stime);
 
-
-
-
-// extern struct ptable ptable;
 
 // Process memory is laid out contiguously, low addresses first:
 //   text
