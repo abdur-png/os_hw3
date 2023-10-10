@@ -57,7 +57,7 @@ static struct proc* allocproc(void) {
 
   acquire(&ptable.lock);
   for(int i = 0; i < NPROC; i++) {
-    p = &ptable.proc[i];
+    p = ptable.proc[i];
     if(p->state == UNUSED)
       goto found;
   }
@@ -209,7 +209,7 @@ void exit(void) {
 
   acquire(&ptable.lock);
   for(int i = 0; i < NPROC; i++) {
-    p = &ptable.proc[i];
+    p = ptable.proc[i];
     if(p->state == SLEEPING) {
         p->sleep_time++;
     } else if(p->state == RUNNABLE) {
@@ -225,7 +225,7 @@ release(&ptable.lock);
 
   // Pass abandoned children to init.
   for(int i = 0; i < NPROC; i++) {
-    p = &ptable.proc[i];
+    p = ptable.proc[i];
     if(p->parent == proc) {
       p->parent = initproc;
       if(p->state == ZOMBIE)
@@ -252,7 +252,7 @@ int wait(void) {
     // Scan through table looking for zombie children.
     havekids = 0;
     for(int i = 0; i < NPROC; i++) {
-    p = &ptable.proc[i];
+    p = ptable.proc[i];
       if(p->parent != proc)
         continue;
       havekids = 1;
@@ -306,7 +306,7 @@ void scheduler(void) {
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
     for(int i = 0; i < NPROC; i++) {
-    p = &ptable.proc[i];
+    p = ptable.proc[i];
       if(p->state != RUNNABLE)
         continue;
 
@@ -414,7 +414,7 @@ static void wakeup1(void* chan) {
   struct proc* p;
 
  for(int i = 0; i < NPROC; i++) {
-    p = &ptable.proc[i];
+    p = ptable.proc[i];
     if(p->state == SLEEPING && p->chan == chan)
       p->state = RUNNABLE;
  }
@@ -459,13 +459,13 @@ void procdump(void) {
       [RUNNABLE] "runble",
       [RUNNING] "run   ",
       [ZOMBIE] "zombie"};
-  int i;
+      
   struct proc* p;
   char* state;
   uint pc[10];
 
 for(int i = 0; i < NPROC; i++) {
-    p = &ptable.proc[i];
+    p = ptable.proc[i];
     if(p->state == UNUSED)
       continue;
     if(p->state >= 0 && p->state < NELEM(states) && states[p->state])
